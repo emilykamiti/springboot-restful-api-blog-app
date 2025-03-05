@@ -47,8 +47,7 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> comments = commentRepository.findByPostId(postId);
 
         //convert list of comment entities to list of Comment dto's
-        return comments.stream().map(comment ->
-                mapToDto(comment)).collect(Collectors.toList());
+        return comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
     }
 
     @Override
@@ -67,11 +66,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public CommentDto updateComment(long postId, long commentId, CommentDto commentRequest) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResourceNotFoundException("Post", "id", postId));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
-        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new ResourceNotFoundException("Comment", "id", commentId));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
 
         if (!comment.getPost().getId().equals(post.getId())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not belong to post");
@@ -82,6 +79,17 @@ public class CommentServiceImpl implements CommentService {
 
         Comment updateComment = commentRepository.save(comment);
         return mapToDto(updateComment);
+    }
+
+    @Override
+    public void deleteCommentById(long postId, long commentId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        if (!comment.getPost().getId().equals(post.getId())) {
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Comment does not exist");
+        }
+        commentRepository.delete((comment));
     }
 
     private CommentDto mapToDto(Comment comment) {
