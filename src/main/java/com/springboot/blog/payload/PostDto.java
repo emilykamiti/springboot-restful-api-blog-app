@@ -12,6 +12,7 @@ public class PostDto {
 
     //Title should not be empty on null
     @NotEmpty
+    @Size(min = 2, message = "post title should have at least 2 characters")
     private String title;
 
     //Post description should not be null or empty
