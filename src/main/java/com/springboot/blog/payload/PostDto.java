@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Data
 public class PostDto {
-    private long id;
+    private Long id;
 
     //Title should not be empty on null
     @NotEmpty
